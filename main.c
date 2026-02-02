@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "sqlite3.c"
 #include "SQLServiceLayer.c"
-#include "sqlite3.h"
+
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
