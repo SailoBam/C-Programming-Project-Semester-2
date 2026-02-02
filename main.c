@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "sqlite3.c"
+#include "sqlite3.h"
 #include "SQLServiceLayer.c"
 
 
