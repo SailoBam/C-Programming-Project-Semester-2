@@ -40,7 +40,7 @@ void signup (void) {
     
 }
 
-int main(void) {
+void startlogin(void) {
     int choice;
     printf("Please indicate wether you need to login, sign up or close the database:");
     printf("\n1. Login:");
@@ -62,7 +62,6 @@ int main(void) {
             printf("\nProgram now closing...");
             break;
     }
-    return 0;
     
 }
 
