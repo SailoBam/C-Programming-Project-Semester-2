@@ -63,6 +63,9 @@ void Equipment_Functions () {
                 Remove_Equipment ();
                 break;
             case 4:
+                View_Equipment ();
+                break;
+            case 5:
                 printf("\n\n...Returning you to the ADMIN SCREEN...\n");
                 int i = 1;
                 break;
