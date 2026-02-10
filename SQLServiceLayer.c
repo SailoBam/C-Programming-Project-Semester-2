@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sqlite3.c"
 #include "db.h"
 
 
@@ -92,26 +91,45 @@ void SignUpStudent(sqlite3 *DB, char first_name[], char last_name[], char userna
     }
 }
 
-char[] SignIn(char username[], char password[]){
-	char command[1000];
-	snprintf(command, sizeof command, "SELECT STATUS FROM USERS WHERE USERNAME = '%s' AND PASSWORD = '%s');");
-	char *errMsg = 0;
-    int signIn = sqlite3_exec(DB, command, 0, 0, &errMsg);
+int identifyStatus(void *data, int argc, char **argv, char **colName)
+{
+    int *status = (int *)data;
 
-    if (signIn != SQLITE_OK) {
-        printf("Users error: %s\n", errMsg);
-        sqlite3_free(errMsg);
-    }
-    
-    switch (tolower(signIn[0])) {
-            case 's':
-                return 1
-            case 't':
-                return 2
-            case 'a':
-            	return 3
-        }
+    if (argc < 1 || argv[0] == NULL)
+        return 0;
+
+    if (strcmp(argv[0], "student") == 0)
+        *status = 1;
+    else if (strcmp(argv[0], "technician") == 0)
+        *status = 2;
+    else if (strcmp(argv[0], "admin") == 0)
+        *status = 3;
+
+    return 0;  // MUST return 0
 }
+
+int SignIn(sqlite3 *DB, char username[], char password[])
+{
+    char sql[512];
+    int status = 0;
+    char *errMsg = NULL;
+
+    snprintf(sql, sizeof sql,
+        "SELECT STATUS FROM USERS WHERE USERNAME='%s' AND PASSWORD='%s';",
+        username, password);
+
+    int rc = sqlite3_exec(DB, sql, identifyStatus, &status, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQLite error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+        return -1;
+    }
+
+    return status;  // 0 = not found, 1/2/3 = role
+}
+
+
 
 int printUsers(void *NotUsed, int argc, char **argv, char **colName)
 {
