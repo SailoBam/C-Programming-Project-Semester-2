@@ -1,9 +1,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+<<<<<<< HEAD
 #include "technicianFunctions.c"
 #include "AdminFunctions.c"
 #include "StudentFunctions.c"
+=======
+#include "db.h"
+#include "SQLServiceLayer.h"
+
+
+
+
+>>>>>>> origin/main
 void login (void) {
     char username [100];
     char password [100];
@@ -50,7 +59,7 @@ void signup (void) {
     char last_name [100];
     char username [100];
     char password [100];
-    char university_ID [100];
+    int university_ID;
     
     printf("\nThe following questions are necessary to signup to the database.");
     printf("\nA sign up is only available for students - otherwise a username and pasword will be provided.");
@@ -64,12 +73,15 @@ void signup (void) {
     printf("\nEnter your password: ");
     scanf("%s", password);
     printf("\nEnter your university_ID: ");
-    scanf("%s", university_ID);
+    scanf("%d", &university_ID);
     
-    //enter the info into an temperary sql database for users.
-    
+<<<<<<< HEAD
     student ();
     
+=======
+    //enter the info into the sql database for users.
+    SignUpStudent(DB, first_name, last_name, username, password, university_ID);
+>>>>>>> origin/main
 }
 
 void startlogin(void) {

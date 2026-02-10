@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "sqlite3.c"
+#include "db.h"
+
+
+// =============== Table Creation ===================
 
 void CreateUsersTable(sqlite3 *DB) {
     char *sql =
@@ -16,6 +20,11 @@ void CreateUsersTable(sqlite3 *DB) {
 	
 	char *errMsg = 0;
     int rc = sqlite3_exec(DB, sql, 0, 0, &errMsg);
+    
+	if (rc != SQLITE_OK) {
+        printf("Equipment error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
     
     printf("Users table created successfully\n");
 	}
@@ -64,8 +73,62 @@ void CreateBookingTable(sqlite3 *DB) {
 }
 
 
-void OpenDB(void) {
-    sqlite3 *DB;
+
+// =============== Accessing Functions =======================
+
+
+void SignUpStudent(sqlite3 *DB, char first_name[], char last_name[], char username[], char password[], int university_ID){
+	char status[] = "student";
+    char command[1000];
+    snprintf(command, sizeof command, "INSERT INTO USERS (USERNAME, NAME, SURNAME, PASSWORD, STATUS, UNIVERSITYID) VALUES('%s', '%s', '%s', '%s', '%s', '%d');", username, first_name, last_name, password, status, university_ID);
+    //printf("%s\n", command);
+    
+    char *errMsg = 0;
+    int addAccount = sqlite3_exec(DB, command, 0, 0, &errMsg);
+
+    if (addAccount != SQLITE_OK) {
+        printf("Users error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+void SignIn(char username[], char password[]){
+	char command[1000];
+	snprintf(command, sizeof command, "SELECT ID FROM USERS WHERE USERNAME = '%s' AND PASSWORD = '%s');");
+	
+	char *errMsg = 0;
+    int signIn = sqlite3_exec(DB, command, 0, 0, &errMsg);
+
+    if (signIn != SQLITE_OK) {
+        printf("Users error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+int printUsers(void *NotUsed, int argc, char **argv, char **colName)
+{
+    for (int i = 0; i < argc; i++) {
+        printf("%-15s", argv[i] ? argv[i] : "NULL");
+    }
+    printf("\n");
+    return 0;
+}
+
+void ListUsers(sqlite3 *DB){
+    printf("----------------------------------------------------------------------------------------------\n");
+
+    const char *sql = "SELECT * FROM USERS;";
+	char *errMsg = NULL;
+    int rc = sqlite3_exec(DB, sql, printUsers, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+
+void OpenDB() {
 
     if (sqlite3_open("store.db", &DB)) {
         printf("Can't open database: %s\n", sqlite3_errmsg(DB));
@@ -74,6 +137,5 @@ void OpenDB(void) {
     CreateUsersTable(DB);
     CreateEquipmentTable(DB);
     CreateBookingTable(DB);
-
-    sqlite3_close(DB);
+    //sqlite3_close(DB);
 }
