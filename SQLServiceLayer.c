@@ -92,10 +92,9 @@ void SignUpStudent(sqlite3 *DB, char first_name[], char last_name[], char userna
     }
 }
 
-void SignIn(char username[], char password[]){
+char[] SignIn(char username[], char password[]){
 	char command[1000];
-	snprintf(command, sizeof command, "SELECT ID FROM USERS WHERE USERNAME = '%s' AND PASSWORD = '%s');");
-	
+	snprintf(command, sizeof command, "SELECT STATUS FROM USERS WHERE USERNAME = '%s' AND PASSWORD = '%s');");
 	char *errMsg = 0;
     int signIn = sqlite3_exec(DB, command, 0, 0, &errMsg);
 
@@ -103,6 +102,15 @@ void SignIn(char username[], char password[]){
         printf("Users error: %s\n", errMsg);
         sqlite3_free(errMsg);
     }
+    
+    switch (tolower(signIn[0])) {
+            case 's':
+                return 1
+            case 't':
+                return 2
+            case 'a':
+            	return 3
+        }
 }
 
 int printUsers(void *NotUsed, int argc, char **argv, char **colName)
