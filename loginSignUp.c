@@ -1,10 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include "technicianFunctions.c"
-#include "AdminFunctions.c"
-#include "StudentFunctions.c"
 #include "db.h"
+#include "sqlite3.c"
+#include "sqlite3.h"
 #include "SQLServiceLayer.h"
 
 
@@ -15,7 +11,6 @@ void login (void) {
 
     int i = 0;
     while (i == 0) {
-        int c = 0;
         /* db squlite return a 1 if their status = 'student'
       return a 2 if their status = 'technician'
       return a 3 if their status = 'admin'
@@ -25,18 +20,19 @@ void login (void) {
         scanf("%s", username);
         printf("\nEnter your Password: ");
         scanf("%s", password);
+        int c = SignIn(DB, username, password);
         
         switch (c) {
             case 1:
-                printf("\nstudent");
+                printf("\n YOUR A student");
                 //student();
                 exit(0);
             case 2:
-                printf("\ntech");
+                printf("\nYOUR A tech");
                 //technician();
                 exit(0);
             case 3:
-                printf("\nadmin");
+                printf("\nYOUR A admin");
                 //admin();
                 exit(0);
         default:
