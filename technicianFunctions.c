@@ -40,13 +40,15 @@ void technician (void) {
                 Update_Booking_For_Equipment;
                 break;
             case 5:
-                printf("NOW CLOSING THE PROGRAM...");
+                printf("\nNOW CLOSING THE PROGRAM...");
                 exit(0);
             default:
-                printf("<INVALID OPTION CHOSEN>");
-                printf("<ERROR RESULTING IN PROGRAM SHUTTING DOWN>");
+                printf("\n<INVALID OPTION CHOSEN>");
+                printf("\n<ERROR RESULTING IN PROGRAM SHUTTING DOWN>");
                 exit(0);
         }
+        printf("\nAre you finished with your objectives (Yes (1) or No (0)): ")
+        scanf("%d", &i);
     }
 }
 void View_Equipment (void) {
@@ -56,6 +58,22 @@ void Update_Equipment_Status (void) {
     printf("\nEnter the Items ID number: ");
     scanf("%d", int ID_ENUM);
     printf("\nWould you like to change the Availibility (1) or Equipment Status (2): ");
+    scanf("%d", choice);
+    switch(choice) {
+        case 1:
+            printf("\nInput what you would like to change the availability to: ");
+            scanf("%s", char available [100]);
+            //change the equipment availability, use id number to identify it
+            break;
+        case 2:
+            printf("\nInput what you would like to change the equipment status to: ");
+            scanf("%s", char status [100]);
+            //change the equipment status, use id number to identify it
+            break;
+        default:
+            printf("<invalid-choice>");
+            break;
+    }
     //the user will input the change they want for the piece of equipment
     // they will be asked the ID number of the equipment item
     //updates the status of the equipment (working, broken, being repaired)
