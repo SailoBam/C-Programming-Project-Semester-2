@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include "loginSignUp.c"
 
 void View_Equipment (void);
 void Update_Equipment_Status (void);
@@ -52,6 +53,9 @@ void View_Equipment (void) {
     //displays all equipment sql
 }
 void Update_Equipment_Status (void) {
+    printf("\nEnter the Items ID number: ");
+    scanf("%d", int ID_ENUM);
+    printf("\nWould you like to change the Availibility (1) or Equipment Status (2): ");
     //the user will input the change they want for the piece of equipment
     // they will be asked the ID number of the equipment item
     //updates the status of the equipment (working, broken, being repaired)
