@@ -105,7 +105,7 @@ int identifyStatus(void *data, int argc, char **argv, char **colName)
     else if (strcmp(argv[0], "admin") == 0)
         *status = 3;
 
-    return 0;  // MUST return 0
+    return 0;
 }
 
 int SignIn(sqlite3 *DB, char username[], char password[])
@@ -126,7 +126,7 @@ int SignIn(sqlite3 *DB, char username[], char password[])
         return -1;
     }
 
-    return status;  // 0 = not found, 1/2/3 = role
+    return status;
 }
 
 

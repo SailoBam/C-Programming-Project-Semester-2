@@ -32,7 +32,7 @@ void login (void) {
                 //technician();
                 exit(0);
             case 3:
-                printf("\nYOUR A admin");
+                printf("\nYOUR AN admin");
                 //admin();
                 exit(0);
         default:
