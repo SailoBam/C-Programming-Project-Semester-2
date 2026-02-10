@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include "sqlite3.c"
 #include "sqlite3.h"
+#include "db.c"
+#include "db.h"
 #include "SQLServiceLayer.c"
+#include "SQLServiceLayer.h"
 #include "loginSignUp.c"
 
 
@@ -11,6 +14,8 @@
 int main(int argc, char *argv[]) {
 	
 	OpenDB();
+	ListUsers(DB);
 	startlogin();
+
 	return 0;
-}
+} 
