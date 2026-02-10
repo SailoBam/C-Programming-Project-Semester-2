@@ -1,18 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-<<<<<<< HEAD
 #include "technicianFunctions.c"
 #include "AdminFunctions.c"
 #include "StudentFunctions.c"
-=======
 #include "db.h"
 #include "SQLServiceLayer.h"
 
 
-
-
->>>>>>> origin/main
 void login (void) {
     char username [100];
     char password [100];
@@ -75,13 +70,8 @@ void signup (void) {
     printf("\nEnter your university_ID: ");
     scanf("%d", &university_ID);
     
-<<<<<<< HEAD
-    student ();
-    
-=======
     //enter the info into the sql database for users.
     SignUpStudent(DB, first_name, last_name, username, password, university_ID);
->>>>>>> origin/main
 }
 
 void startlogin(void) {
