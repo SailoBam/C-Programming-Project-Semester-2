@@ -28,13 +28,16 @@ void login (void) {
         
         switch (c) {
             case 1:
-                student();
+                printf("\nstudent");
+                //student();
                 exit(0);
             case 2:
-                technician();
+                printf("\ntech");
+                //technician();
                 exit(0);
             case 3:
-                admin();
+                printf("\nadmin");
+                //admin();
                 exit(0);
         default:
                 printf("Would you like to try again (Yes=0 or No=1): ");
