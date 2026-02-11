@@ -51,6 +51,7 @@ void main (void) {
 
 void View_Equipment (void) {
     //displays all equipment sql
+    ListEquipment();
 }
 void View_Own_Bookings (void) {
     int University_ID = 0;

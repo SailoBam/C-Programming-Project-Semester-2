@@ -1,26 +1,27 @@
-
-
 #include <stdlib.h>
 #include <stdio.h>
-#include "loginSignUp.c"
+#include "db.h"
+#include "SQLServiceLayer.h"
 
-void User_Functions (void);
-void Add_User (void);
-void Change_User (void);
-void Remove_User (void);
-void View_User (void);
-void Equipment_Functions (void);
+
+void Change_Equipment (void);
 void Add_Equipment (void);
 void Change_Equipment (void);
 void Remove_Equipment (void);
 void View_Equipment (void);
-
-
+void User_Functions (void);
+void Add_User (void);	
+void Change_User (void);	
+void Remove_User (void);
+void View_Users (void);
+void Equipment_Functions(void);
+void User_Functions (void);
+	
 void admin (void) {
     int i =0;
     while (i == 0){
         int choice;
-        printf("Welcome Back Admin!");
+        printf("\n\n Welcome Back Admin!");
         printf("\nWhat would you like to do:");
         printf("\n1. User Functions: ");
         printf("\n2. Equipment Functions ");
@@ -34,24 +35,24 @@ void admin (void) {
                 Equipment_Functions();
                 break;
             case 3:
-                printf("NOW CLOSING THE PROGRAM...");
-                int i = 1;
-                break;
+                printf("\n\n NOW CLOSING THE PROGRAM...");
+                exit(0);
             default:
                 break;
         }
     }
 }
 
-void Equipment_Functions () {
+
+void Equipment_Functions(void) {
     int i =0;
     while (i == 0){
         int choice = 0;
-        printf("\n\nWhat Are you doing: ")
+        printf("\n\nWhat Are you doing: ");
         printf("\n1. Add New Equipment: ");
         printf("\n2. Change Equipment Details: ");
         printf("\n3. Remove Equipment: ");
-        printf("\n4. View Equipment: ")
+        printf("\n4. View Equipment: ");
         printf("\n5. Return to Admin screen : ");
         scanf("%d", &choice);
         switch(choice){
@@ -69,7 +70,7 @@ void Equipment_Functions () {
                 break;
             case 5:
                 printf("\n\n...Returning you to the ADMIN SCREEN...\n");
-                int i = 1;
+                admin();
                 break;
             default:
                 break;
@@ -77,24 +78,38 @@ void Equipment_Functions () {
     }
 }
 
-void Add_Equipment (void) {
+
+
+void Add_Equipment(void) {
     int Item_Number = 0;
-    char Item_Name [100];
-    char Purchase_Date [20];
-    char Description [100];
-    char Status [100];
-    char Availability [] = "Open";
+    char Item_Name[50];
+    char Purchase_Date[20];
+    char Description[100];
+    char Status[25];
+    char Availability[] = "Open";
+
     printf("\nEnter the Item Number for the Equipment: ");
     scanf("%d", &Item_Number);
+    while(getchar() != '\n'); // flush newline after number
+
     printf("\nEnter the Item's Name for the Equipment: ");
-    scanf("%s", &Item_Name);
-    printf("\nEnter the Purchase Date for the Equipment (day/month/year): ");
-    scanf("%s", &Purchase_Date);
-    printf("\nEnter the Item's Description (word limit is 100): ");
-    scanf("%s", &Description);
-    printf("\nEnter the Status of the Equipment (ei: working, broken...): ");
-    scanf("%s", &Status);
-   //call the sql and add. include the variable that only appears in the variable section
+    fgets(Item_Name, sizeof(Item_Name), stdin);
+    Item_Name[strcspn(Item_Name, "\n")] = 0; // remove newline
+
+    printf("\nEnter the Purchase Date (day/month/year): ");
+    fgets(Purchase_Date, sizeof(Purchase_Date), stdin);
+    Purchase_Date[strcspn(Purchase_Date, "\n")] = 0;
+
+    printf("\nEnter the Item's Description (word limit 100): ");
+    fgets(Description, sizeof(Description), stdin);
+    Description[strcspn(Description, "\n")] = 0;
+
+    printf("\nEnter the Status of the Equipment (ie: working, broken...): ");
+    fgets(Status, sizeof(Status), stdin);
+    Status[strcspn(Status, "\n")] = 0;
+
+    // SQL function to add equipment
+    AddEquipment(DB, Item_Number, Item_Name, Purchase_Date, Description, Status, Availability);
     
 }
 
@@ -103,51 +118,59 @@ void Change_Equipment (void) {
     while (i == 0){
         int choice = 0;
         int ID_Number = 0;
+        char item_number[100];
+        char item_name[100];
+        char purchase_date[100];
+        char description[100];
+        char status[100];
+        char available[100];
+        ListEquipment(DB);
         printf("\nPlease enter the ID Number for the sql database:  ");
         scanf("%d", &ID_Number);
-        printf("\n\nWhat are you changing? ")
+        printf("\n\nWhat are you changing? ");
         printf("\n1. Item Number: ");
         printf("\n2. Item Name: ");
         printf("\n3. Purchase Date: ");
         printf("\n4. Description: ");
         printf("\n5. Status: ");
         printf("\n6. Availability: ");
-        printf("\n7. Return to Equipment Window: ")
+        printf("\n7. Return to Equipment Window: ");
         scanf("%d", &choice);
         switch(choice){
             case 1:
                 printf("What do you want to change the item number too: ");
-                scanf("%d", int item_number);
-                //changes the item number. call sql and change it.
+                scanf("%s", item_number);
+                EditEquipment(DB, ID_Number, "ITEMNUMBER", item_number);
                 break;
             case 2:
-                char item_name [100];
+
                 printf("What do you want to change the item name too: ");
                 scanf("%s", item_name);
-                //changes the item name.  call sql and change it.
+                EditEquipment(DB, ID_Number, "ITEMNAME", item_name);
                 break;
             case 3:
-                char purchase_date [100];
+                
                 printf("What do you want to change the Purchase Date too: ");
                 scanf("%s", purchase_date);
-                //changes the purchase date.  call sql and change it.
+                EditEquipment(DB, ID_Number, "PURCHASEDATE", purchase_date);
                 break;
             case 4:
-                char description [100];
+                
                 printf("What do you want to change the description too: ");
                 scanf("%s", description);
-                //changes the description.  call sql and change it.                break;
+                EditEquipment(DB, ID_Number, "DESCRIPTION", description);               
+				break;
             case 5:
-                char status [100];
+                
                 printf("What do you want to change the status too: ");
                 scanf("%s", status);
-                //changes the status.  call sql and change it.
+                EditEquipment(DB, ID_Number, "STATUS", status);   
                 break;
             case 6:
-                char available [100];
+                
                 printf("What do you want to change the status too: ");
                 scanf("%s", available);
-                //changes the available status.  call sql and change it.
+                EditEquipment(DB, ID_Number, "AVAILABILITY", available);   
                 break;
             case 7:
                 printf("\n\n...Returning you to the ADMIN SCREEN...\n");
@@ -156,28 +179,35 @@ void Change_Equipment (void) {
             default:
                 break;
         }
+        
+        Equipment_Functions();
     }
     
 }
 void Remove_Equipment (void) {
+	int ID_Number;
     printf("\nPlease enter the ID Number for the equipment that you want to remove:  ");
     scanf("%d", &ID_Number);
-    //remove the equipment Item
+    
+    //SQL function to remove entry
+    RemoveEquipment(DB, ID_Number);
+    Equipment_Functions();
 }
 
 void View_Equipment (void) {
-    // outputs the sql for equipment
+    ListEquipment(DB);
 }
+
 
 void User_Functions (void) {
     int i =0;
     while (i == 0){
         int choice = 0;
-        printf("\n\nWhat Are you doing: ")
+        printf("\n\nWhat Are you doing: ");
         printf("\n1. Add New User: ");
         printf("\n2. Change User Details: ");
         printf("\n3. Remove User: ");
-        printf("\n4. View User Database: ")
+        printf("\n4. View User Database: ");
         printf("\n5. Return to Admin screen : ");
         scanf("%d", &choice);
         switch(choice){
@@ -188,20 +218,21 @@ void User_Functions (void) {
                 Change_User();
                 break;
             case 3:
-                Remove_User ();
+                Remove_User();
                 break;
             case 4:
-                View_User ();
+                View_Users();
                 break;
             case 5:
                 printf("\n\n...Returning you to the ADMIN SCREEN...\n");
-                int i = 1;
+                admin();
                 break;
             default:
                 break;
         }
     }
 }
+
 
 
 void Add_User (void) {
@@ -224,6 +255,7 @@ void Add_User (void) {
     printf("\nEnter the University ID of the User: ");
     scanf("%d", &University_ID);
    //call the sql and add. include the variable that only appears in the variable section
+   SignUpAdmin(DB, First_Name, Surname, Username, Password, University_ID, Status);
 }
 
 void Change_User (void) {
@@ -231,51 +263,58 @@ void Change_User (void) {
     while (i == 0){
         int choice = 0;
         int ID_Number = 0;
+        char username[100];
+        char first_name[100];
+        char surname[100];
+        char password[100];
+        char status[100];
+        char university_ID[100];
         printf("\nPlease enter the ID Number for the sql database:  ");
         scanf("%d", &ID_Number);
-        printf("\n\nWhat are you changing? ")
+        printf("\n\nWhat are you changing? ");
         printf("\n1. Username: ");
         printf("\n2. First Name: ");
         printf("\n3. Surname: ");
         printf("\n4. Password: ");
         printf("\n5. Status: ");
         printf("\n6. University ID: ");
-        printf("\n7. Return to Equipment Window: ")
+        printf("\n7. Return to Equipment Window: ");
         scanf("%d", &choice);
         switch(choice){
             case 1:
-                char username [100];
+                
                 printf("What do you want to change the Username too: ");
                 scanf("%s", username);
-                //changes the username. call sql and change it.
+                EditUser(DB, ID_Number, "USERNAME", username);
                 break;
             case 2:
-                char first_name [100];
+                
                 printf("What do you want to change the first name too: ");
                 scanf("%s", first_name);
-                //changes the first name.  call sql and change it.
+                EditUser(DB, ID_Number, "NAME", first_name);
                 break;
             case 3:
-                char surname [100];
+                
                 printf("What do you want to change the surname too: ");
                 scanf("%s", surname);
-                //changes the surname.  call sql and change it.
+                EditUser(DB, ID_Number, "SURNAME", surname);
                 break;
             case 4:
-                char password [100];
+                
                 printf("What do you want to change the password too: ");
                 scanf("%s", password);
-                //changes the password.  call sql and change it.                break;
+                EditUser(DB, ID_Number, "PASSWORD", password);               
+				break;
             case 5:
-                char status [100];
+                
                 printf("What do you want to change the status too: ");
                 scanf("%s", status);
-                //changes the status.  call sql and change it.
+                EditUser(DB, ID_Number, "STATUS", status);  
                 break;
             case 6:
                 printf("What do you want to change the university ID too: ");
-                scanf("%d", int university_ID);
-                //changes the uni Id.  call sql and change it.
+                scanf("%d", university_ID);
+                EditUser(DB, ID_Number, "UNIVERSITYID", university_ID);  
                 break;
             case 7:
                 printf("\n\n...Returning you to the ADMIN SCREEN...\n");
@@ -284,17 +323,17 @@ void Change_User (void) {
             default:
                 break;
         }
+        admin();
     }
     
 }
 void Remove_User (void) {
+	int ID_Number;
     printf("\nPlease enter the ID Number for the User that you want to remove:  ");
     scanf("%d", &ID_Number);
-    //remove the equipment Item
+    RemoveUser(DB, ID_Number);
 }
 
-void View_User (void) {
-    // outputs the user sql
+void View_Users (void) {
+    ListUsers(DB);
 }
-
-

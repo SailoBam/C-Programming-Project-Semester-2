@@ -2,9 +2,9 @@
 #include "sqlite3.c"
 #include "sqlite3.h"
 #include "SQLServiceLayer.h"
-#include "AdminFunctions.c"
-#include "technicianFunctions.c"
-#include "studentFunctions.c"
+#include "AdminFunctions.h"
+
+void signup(void);
 
 void login (void) {
     char username [100];
@@ -35,7 +35,7 @@ void login (void) {
                 exit(0);
             case 3:
                 printf("\nYOUR AN admin");
-                //admin();
+                admin();
                 exit(0);
         default:
                 printf("Would you like to try again (Yes=0 or No=1): ");
@@ -47,6 +47,32 @@ void login (void) {
     //scan the sql database to makesure the username and password match with a user.
     // then gives access to neccessary user status; admin, tech or student.
     //"Giving Access" will call the respective file
+    
+}
+
+
+void startlogin(void) {
+    int choice;
+    printf("Please indicate wether you need to login, sign up or close the database:");
+    printf("\n1. Login:");
+    printf("\n2. Sign up:");
+    printf("\n3. Close the program:");
+    scanf("%d", &choice);
+    switch (choice) {
+        case 1:
+            login ();
+            break;
+        case 2:
+            signup();
+            break;
+        case 3:
+            printf("\nThe Program will now close...");
+            exit(0);
+    default:
+            printf("\nInvalid choice detected...");
+            printf("\nProgram now closing...");
+            break;
+    }
     
 }
 
@@ -75,30 +101,4 @@ void signup (void) {
     SignUpStudent(DB, first_name, last_name, username, password, university_ID);
     startlogin();
 }
-
-void startlogin(void) {
-    int choice;
-    printf("Please indicate wether you need to login, sign up or close the database:");
-    printf("\n1. Login:");
-    printf("\n2. Sign up:");
-    printf("\n3. Close the program:");
-    scanf("%d", &choice);
-    switch (choice) {
-        case 1:
-            login ();
-            break;
-        case 2:
-            signup();
-            break;
-        case 3:
-            printf("\nThe Program will now close...");
-            exit(0);
-    default:
-            printf("\nInvalid choice detected...");
-            printf("\nProgram now closing...");
-            break;
-    }
-    
-}
-
 

@@ -6,6 +6,7 @@
 #include "db.h"
 #include "SQLServiceLayer.c"
 #include "SQLServiceLayer.h"
+#include "AdminFunctions.c"
 #include "loginSignUp.c"
 
 
@@ -18,4 +19,4 @@ int main(int argc, char *argv[]) {
 	startlogin();
 
 	return 0;
-} 
+}

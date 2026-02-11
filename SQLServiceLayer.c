@@ -33,6 +33,7 @@ void CreateEquipmentTable(sqlite3 *DB) {
         "CREATE TABLE IF NOT EXISTS EQUIPMENT ("
         "ID INTEGER PRIMARY KEY NOT NULL, "
         "ITEMNUMBER INT NOT NULL, "
+        "ITEMNAME TEXT NOT NULL,"
         "PURCHASEDATE DATE NOT NULL, "
         "DESCRIPTION TEXT NOT NULL, "
         "WORKINGSTATUS TEXT NOT NULL, "
@@ -77,7 +78,7 @@ void CreateBookingTable(sqlite3 *DB) {
 
 
 void SignUpStudent(sqlite3 *DB, char first_name[], char last_name[], char username[], char password[], int university_ID){
-	char status[] = "student";
+	char status[] = "admin";
     char command[1000];
     snprintf(command, sizeof command, "INSERT INTO USERS (USERNAME, NAME, SURNAME, PASSWORD, STATUS, UNIVERSITYID) VALUES('%s', '%s', '%s', '%s', '%s', '%d');", username, first_name, last_name, password, status, university_ID);
     //printf("%s\n", command);
@@ -89,6 +90,35 @@ void SignUpStudent(sqlite3 *DB, char first_name[], char last_name[], char userna
         printf("Users error: %s\n", errMsg);
         sqlite3_free(errMsg);
     }
+}
+
+void SignUpAdmin(sqlite3 *DB, char first_name[], char last_name[], char username[], char password[], int university_ID, char status[]){
+    char command[1000];
+    snprintf(command, sizeof command, "INSERT INTO USERS (USERNAME, NAME, SURNAME, PASSWORD, STATUS, UNIVERSITYID, STATUS) VALUES('%s', '%s', '%s', '%s', '%s', '%d', '%s');", username, first_name, last_name, password, status, university_ID, status);
+    //printf("%s\n", command);
+    
+    char *errMsg = 0;
+    int addAccount = sqlite3_exec(DB, command, 0, 0, &errMsg);
+
+    if (addAccount != SQLITE_OK) {
+        printf("Users error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+void EditUser(sqlite3 *DB, int idNumber, char attribute[], char value[]){
+    char sql[512];
+	char *errMsg = NULL;
+	
+	snprintf(sql, sizeof sql, "UPDATE USERS SET '%s' = '%s' WHERE ID = '%d' ;", attribute, value, idNumber );
+        
+    int rc = sqlite3_exec(DB, sql, 0, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+    printf("\n Entry Edited");
 }
 
 int identifyStatus(void *data, int argc, char **argv, char **colName)
@@ -115,8 +145,7 @@ int SignIn(sqlite3 *DB, char username[], char password[])
     char *errMsg = NULL;
 
     snprintf(sql, sizeof sql,
-        "SELECT STATUS FROM USERS WHERE USERNAME='%s' AND PASSWORD='%s';",
-        username, password);
+        "SELECT STATUS FROM USERS WHERE USERNAME = '%s' AND PASSWORD ='%s';", username, password);
 
     int rc = sqlite3_exec(DB, sql, identifyStatus, &status, &errMsg);
 
@@ -153,7 +182,70 @@ void ListUsers(sqlite3 *DB){
     }
 }
 
-// =============== Accessing EQUIPMENT Functions =======================
+void RemoveUser(sqlite3 *DB, int idNumber){
+	printf("\n INSIDE REMOVEUSER");
+    char sql[512];
+	char *errMsg = NULL;
+	
+	snprintf(sql, sizeof sql, "DELETE FROM USERS WHERE ID = %d;", idNumber );
+    printf("\n message is %s", sql);
+    int rc = sqlite3_exec(DB, sql, 0, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+    printf("\n Entry Removed");
+}
+
+// ==================== Accessing EQUIPMENT Functions =======================
+
+void AddEquipment(sqlite3 *DB, int itemNumber, char itemName[], char purchaseDate[], char description[], char workingStatus[], char availability[] ){
+    char command[1000];
+    snprintf(command, sizeof command, "INSERT INTO EQUIPMENT (ITEMNUMBER, ITEMNAME, PURCHASEDATE, DESCRIPTION, WORKINGSTATUS, AVAILABILITY) VALUES( %d, '%s', '%s', '%s', '%s', '%s');", itemNumber, itemName, purchaseDate, description, workingStatus, availability);
+    printf("%s\n", command);
+    
+    char *errMsg = 0;
+    int addEquipment = sqlite3_exec(DB, command, 0, 0, &errMsg);
+
+    if (addEquipment != SQLITE_OK) {
+        printf("Equipment error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+void RemoveEquipment(sqlite3 *DB, int idNumber){
+    char sql[512];
+	char *errMsg = NULL;
+	
+	snprintf(sql, sizeof sql, "DELETE FROM EQUIPMENT WHERE ID = %d ;", idNumber );
+        
+    int rc = sqlite3_exec(DB, sql, 0, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+    printf("\n Entry Removed");
+}
+
+void EditEquipment(sqlite3 *DB, int idNumber, char attribute[], char value[]){
+    char sql[512];
+	char *errMsg = NULL;
+	
+	snprintf(sql, sizeof sql, "UPDATE EQUIPMENT SET '%s' = '%s' WHERE ID = %d ", attribute, value, idNumber);
+    printf("\n The SQL message is %s", sql);
+    int rc = sqlite3_exec(DB, sql, 0, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+    printf("\n Entry Edited");
+}
+
+
+
 
 int printEquipment(void *NotUsed, int argc, char **argv, char **colName)
 {
@@ -178,7 +270,7 @@ void ListEquipment(sqlite3 *DB){
 }
 
 
-void OpenDB() {
+void OpenDB(void) {
 
     if (sqlite3_open("store.db", &DB)) {
         printf("Can't open database: %s\n", sqlite3_errmsg(DB));
