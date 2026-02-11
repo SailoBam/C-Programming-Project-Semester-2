@@ -1,10 +1,3 @@
-//
-//  main.c
-//  TechnicianAbilities
-//
-//  Created by Dexton Grant on 2026-02-01.
-//
-
 #include <stdlib.h>
 #include <stdio.h>
 #include "loginSignUp.c"
@@ -24,13 +17,13 @@ void technician (void) {
     int i = 0;
     while (i == 0) {
         int choice;
-        printf("Welcome Back Technician!");
+        printf("\n\nWelcome Back Technician!");
         printf("\nWhat would you like to do today?");
-        printf("1. View Equipment: ");
-        printf("2. Update Equipment Status: ");
-        printf("3. View Bookings: ");
-        printf("4. Update Bookings: ");
-        printf("5. Close Program: ");
+        printf("\n1. View Equipment: ");
+        printf("\n2. Update Equipment Status: ");
+        printf("\n3. View Bookings: ");
+        printf("\n4. Update Bookings: ");
+        printf("\n5. Close Program: ");
         scanf("%d", &choice);
         switch(choice){
             case 1:
@@ -52,8 +45,6 @@ void technician (void) {
             default:
                 break;
         }
-        printf("\nAre you finished with your objectives (Yes (1) or No (0)): ")
-        scanf("%d", &i);
     }
 }
 void View_Equipment (void) {
@@ -91,5 +82,35 @@ void View_Bookings (void) {
     //displays all the booking made by students
 }
 void Update_Booking_For_Equipment (void) {
-    // able to update the book status (if its with the student or if they've returned it)
+    int i = 0;
+    while (i == 0) {
+        int choice = 0;
+        int Booking_ID = 0;
+        printf("\nPlease enter the booking ID: ");
+        scanf("%d", &Booking_ID);
+        printf("\n\nWhat are you Updating about the Booking? ");
+        printf("\n1. Start and End Date: ");
+        printf("\n2. Process Returns: ");
+        printf("\n3. Return to Technician Window: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                char Start [11];
+                char End [11];
+                printf("\nWhat is the Start Date (dd/mm/YYYY): ");
+                scanf("%s", &Start);
+                printf("\nWhat is the End Date (dd/mm/YYYY): ");
+                scanf("%s", &End);
+                //add it into the sql database
+                break;
+            case 2:
+                // Get rid of the booking
+                break;
+            case 3:
+                i++;
+                break;
+            default:
+                break;
+        }
+    }
 }

@@ -43,8 +43,7 @@ void admin (void) {
     }
 }
 
-
-void Equipment_Functions(void) {
+void Equipment_Functions (void) {
     int i =0;
     while (i == 0){
         int choice = 0;
