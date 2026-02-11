@@ -14,6 +14,8 @@ void Add_Equipment (void);
 void Change_Equipment (void);
 void Remove_Equipment (void);
 void View_Equipment (void);
+
+
 void admin (void) {
     int i =0;
     while (i == 0){

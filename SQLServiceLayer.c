@@ -73,7 +73,7 @@ void CreateBookingTable(sqlite3 *DB) {
 
 
 
-// =============== Accessing Functions =======================
+// =============== Accessing USERS Functions =======================
 
 
 void SignUpStudent(sqlite3 *DB, char first_name[], char last_name[], char username[], char password[], int university_ID){
@@ -146,6 +146,30 @@ void ListUsers(sqlite3 *DB){
     const char *sql = "SELECT * FROM USERS;";
 	char *errMsg = NULL;
     int rc = sqlite3_exec(DB, sql, printUsers, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+// =============== Accessing EQUIPMENT Functions =======================
+
+int printEquipment(void *NotUsed, int argc, char **argv, char **colName)
+{
+    for (int i = 0; i < argc; i++) {
+        printf("%-15s", argv[i] ? argv[i] : "NULL");
+    }
+    printf("\n");
+    return 0;
+}
+
+void ListEquipment(sqlite3 *DB){
+    printf("----------------------------------------------------------------------------------------------\n");
+
+    const char *sql = "SELECT * FROM EQUIPMENT;";
+	char *errMsg = NULL;
+    int rc = sqlite3_exec(DB, sql, printEquipment, 0, &errMsg);
 
     if (rc != SQLITE_OK) {
         printf("SQL error: %s\n", errMsg);

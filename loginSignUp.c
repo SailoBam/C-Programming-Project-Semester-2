@@ -73,7 +73,7 @@ void signup (void) {
     
     //enter the info into the sql database for users.
     SignUpStudent(DB, first_name, last_name, username, password, university_ID);
-    login();
+    startlogin();
 }
 
 void startlogin(void) {
