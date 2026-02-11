@@ -2,7 +2,9 @@
 #include "sqlite3.c"
 #include "sqlite3.h"
 #include "SQLServiceLayer.h"
-
+#include "AdminFunctions.c"
+#include "technicianFunctions.c"
+#include "studentFunctions.c"
 
 void login (void) {
     char username [100];
