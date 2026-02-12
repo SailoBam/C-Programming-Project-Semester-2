@@ -5,6 +5,7 @@
 #include "AdminFunctions.c"
 #include "StudentFunctions.c"
 #include "TechnicianFunctions.h"
+
 void signup(void);
 void startlogin(void);
 
