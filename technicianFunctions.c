@@ -131,11 +131,11 @@ void Update_Booking_For_Equipment (void) {
                 scanf("%s", &End);
                 EditBookingDate(DB, Booking_ID, Start, End);
                 technician();
+            case 2:
                 FinishBooking(DB, Booking_ID);
                 technician();
             case 3:
                 technician();
-            case 2:
             default:
                 break;
         }
