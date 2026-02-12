@@ -15,7 +15,6 @@
 int main(int argc, char *argv[]) {
 	
 	OpenDB();
-	ListUsers(DB);
 	startlogin();
 
 	return 0;

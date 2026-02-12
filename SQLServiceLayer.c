@@ -75,7 +75,7 @@ void CreateBookingTable(sqlite3 *DB) {
 
 // =============== Accessing USERS Functions =======================
 
-
+// Adds Student to the database
 void SignUpStudent(sqlite3 *DB, char first_name[], char last_name[], char username[], char password[], int university_ID){
 	char status[] = "student";
     char command[1000];
@@ -91,6 +91,7 @@ void SignUpStudent(sqlite3 *DB, char first_name[], char last_name[], char userna
     }
 }
 
+//Allows admin to add a user of any status
 void SignUpAdmin(sqlite3 *DB, char first_name[], char last_name[], char username[], char password[], int university_ID, char status[]){
     char command[1000];
     snprintf(command, sizeof command, "INSERT INTO USERS (USERNAME, NAME, SURNAME, PASSWORD, STATUS, UNIVERSITYID, STATUS) VALUES('%s', '%s', '%s', '%s', '%s', '%d', '%s');", username, first_name, last_name, password, status, university_ID, status);
@@ -105,6 +106,7 @@ void SignUpAdmin(sqlite3 *DB, char first_name[], char last_name[], char username
     }
 }
 
+//Allows editing of a user
 void EditUser(sqlite3 *DB, int idNumber, char attribute[], char value[]){
     char sql[512];
 	char *errMsg = NULL;
@@ -120,6 +122,8 @@ void EditUser(sqlite3 *DB, int idNumber, char attribute[], char value[]){
     printf("\n Entry Edited");
 }
 
+
+// Identifies if a user is a student, technician or admin
 int identifyStatus(void *data, int argc, char **argv, char **colName)
 {
     int *status = (int *)data;
@@ -137,6 +141,7 @@ int identifyStatus(void *data, int argc, char **argv, char **colName)
     return 0;
 }
 
+//Signs in a user
 int SignIn(sqlite3 *DB, char username[], char password[])
 {
     char sql[512];
@@ -158,7 +163,7 @@ int SignIn(sqlite3 *DB, char username[], char password[])
 }
 
 
-
+// Prints the entries for users
 int printUsers(void *NotUsed, int argc, char **argv, char **colName)
 {
     for (int i = 0; i < argc; i++) {
@@ -168,6 +173,7 @@ int printUsers(void *NotUsed, int argc, char **argv, char **colName)
     return 0;
 }
 
+//Runs throught each user printing them to the screen
 void ListUsers(sqlite3 *DB){
     printf("----------------------------------------------------------------------------------------------\n");
 
@@ -181,8 +187,8 @@ void ListUsers(sqlite3 *DB){
     }
 }
 
+//Deletes a user from the table
 void RemoveUser(sqlite3 *DB, int idNumber){
-	printf("\n INSIDE REMOVEUSER");
     char sql[512];
 	char *errMsg = NULL;
 	
@@ -199,10 +205,11 @@ void RemoveUser(sqlite3 *DB, int idNumber){
 
 // ==================== Accessing EQUIPMENT Functions =======================
 
+
+// Adds a piece of equipment to the correct table
 void AddEquipment(sqlite3 *DB, int itemNumber, char itemName[], char purchaseDate[], char description[], char workingStatus[], char availability[] ){
     char command[1000];
     snprintf(command, sizeof command, "INSERT INTO EQUIPMENT (ITEMNUMBER, ITEMNAME, PURCHASEDATE, DESCRIPTION, WORKINGSTATUS, AVAILABILITY) VALUES( %d, '%s', '%s', '%s', '%s', '%s');", itemNumber, itemName, purchaseDate, description, workingStatus, availability);
-    printf("%s\n", command);
     
     char *errMsg = 0;
     int addEquipment = sqlite3_exec(DB, command, 0, 0, &errMsg);
@@ -213,6 +220,7 @@ void AddEquipment(sqlite3 *DB, int itemNumber, char itemName[], char purchaseDat
     }
 }
 
+//Deletes a piece of equipment from the table
 void RemoveEquipment(sqlite3 *DB, int idNumber){
     char sql[512];
 	char *errMsg = NULL;
@@ -228,12 +236,13 @@ void RemoveEquipment(sqlite3 *DB, int idNumber){
     printf("\n Entry Removed");
 }
 
+//Edits an attribute of an entry on the equipment table
 void EditEquipment(sqlite3 *DB, int idNumber, char attribute[], char value[]){
     char sql[512];
 	char *errMsg = NULL;
 	
 	snprintf(sql, sizeof sql, "UPDATE EQUIPMENT SET '%s' = '%s' WHERE ID = %d ", attribute, value, idNumber);
-    printf("\n The SQL message is %s", sql);
+    //printf("\n The SQL message is %s", sql);
     int rc = sqlite3_exec(DB, sql, 0, 0, &errMsg);
 
     if (rc != SQLITE_OK) {
@@ -270,7 +279,7 @@ void ListEquipment(sqlite3 *DB){
 
 // ==================== Accessing BOOKING Functions =======================
 
-
+//Adds a booking entry to the table
 void AddBooking(sqlite3 *DB, int bookingID, int studentID, int itemNumber, char requestedAt[], char startDate[], char dueDate[]){
 	printf("INSIDE ADD BOOKINGS");
     char command[1000];
@@ -299,6 +308,7 @@ void AddBooking(sqlite3 *DB, int bookingID, int studentID, int itemNumber, char 
     
 }
 
+//Prints each entry in the booking table
 void ListBookings(sqlite3 *DB){
     printf("----------------------------------------------------------------------------------------------\n");
 
@@ -312,6 +322,7 @@ void ListBookings(sqlite3 *DB){
     }
 }
 
+//Lists all bookings associated with a student
 void ListPersonalBookings(sqlite3 *DB, int universityID){
     printf("----------------------------------------------------------------------------------------------\n");
 	char command[1000];
@@ -326,6 +337,7 @@ void ListPersonalBookings(sqlite3 *DB, int universityID){
     }
 }
 
+//Deletes a booking from the table
 void CancelBooking(sqlite3 *DB, int bookingID, int studentID){
 	char find[512];
 	char *errMsg = NULL;
@@ -339,7 +351,8 @@ void CancelBooking(sqlite3 *DB, int bookingID, int studentID){
         printf("SQL error: %s\n", errMsg);
         sqlite3_free(errMsg);
     }
-    
+
+// Sets the correct availablitity in the equipment table
     char sql[512];
 	snprintf(sql, sizeof sql, "DELETE FROM BOOKING WHERE BOOKINGID = %d;", bookingID);
     printf("\n message is %s", sql);
@@ -351,6 +364,7 @@ void CancelBooking(sqlite3 *DB, int bookingID, int studentID){
     }
 }
 
+//Removes and sorts the availability of a booking and its item
 void FinishBooking(sqlite3 *DB, int bookingID){
 	char find[512];
 	char *errMsg = NULL;
@@ -376,6 +390,7 @@ void FinishBooking(sqlite3 *DB, int bookingID){
     }
 }
 
+//Allows editing of the dates for a booking
 void EditBookingDate(sqlite3 *DB, int idNumber, char startDate[], char dueDate[]){
     char sql[512];
 	char *errMsg = NULL;
@@ -392,7 +407,7 @@ void EditBookingDate(sqlite3 *DB, int idNumber, char startDate[], char dueDate[]
 }
 
 
-
+//Runs the initial functions to open the database
 void OpenDB(void) {
 
     if (sqlite3_open("store.db", &DB)) {
@@ -402,5 +417,4 @@ void OpenDB(void) {
     CreateUsersTable(DB);
     CreateEquipmentTable(DB);
     CreateBookingTable(DB);
-    //sqlite3_close(DB);
 }
