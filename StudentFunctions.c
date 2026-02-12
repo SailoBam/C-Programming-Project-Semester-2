@@ -1,12 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include "loginSignUp.c"
-#include "sqlite3.c"
 #include "sqlite3.h"
-#include "db.c"
 #include "db.h"
-#include "SQLServiceLayer.c"
 #include "SQLServiceLayer.h"
 //declared functions for later use
 void View_Equipment (void);
@@ -31,9 +27,9 @@ void student (void) {
         printf("\n4. Cancel Bookings: ");
         printf("\n5. Close Program: ");
         scanf("%d", &choice);
-        switch(choice){ // switch case for each option afforded to the user. Calls a function based on the answer
-            case 1: // calls View_equipment
-                View_Equipment();
+        switch(choice){
+            case 1:
+                ListEquipment(DB);
                 break;
             case 2: // calls View_Own_Bookings
                 View_Own_Bookings();
@@ -56,19 +52,16 @@ void student (void) {
 /*
  The View_Equipment function lists all the items in the equipment database
  */
-void View_Equipment (void) {
-    //displays all equipment sql
-    ListEquipment();
-}
-
 /*
  The View_Own_Bookings function, asks the user for their uni ID and outputs all bookings related to that ID
  */
+
 void View_Own_Bookings (void) {
     int University_ID = 0;
     printf("Please Enter your University ID: ");
     scanf("%d", &University_ID);
     //Output any bookings made with that Uni ID
+    ListPersonalBookings(DB, University_ID);
 }
 
 /*
@@ -78,7 +71,7 @@ void View_Own_Bookings (void) {
 void Make_Bookings (void) {
     int University_ID = 0;
     int Item_Number = 0;
-    int Booking_ID = rand() % 900000000 + 100000000; // a random number genarated between 999999999 and 100000000
+    int Booking_ID = rand() % 9000 + 100;
     char Start_Date [] = "-1"; // placeholder; will be changed by the techinician in another file
     char Due_Date [] = "-1"; // placeholder; will be changed by the techinician in another file
     // the following gets the current date from the user and saves it as a string
@@ -91,6 +84,7 @@ void Make_Bookings (void) {
     printf("Please Enter the Item Number: "); // to get the item number
     scanf("%d", &Item_Number);
     //put into the database, new booking
+    AddBooking(DB, Booking_ID, University_ID, Item_Number, Requested_Date, Start_Date, Due_Date);
 }
 /*
  the Cancel_Booking function removes a booking made by the student
@@ -105,4 +99,5 @@ void Cancel_Bookings (void) {
     printf("Please Enter the Booking Number: ");
     scanf("%d", &Booking_ID);
     // make sure the booking reference and uni ID add up. Get rid of the booking. can only cancel if there is "-1" in start date.
+    CancelBooking(DB, Booking_ID, University_ID);
 }

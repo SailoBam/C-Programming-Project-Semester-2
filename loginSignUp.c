@@ -2,10 +2,11 @@
 #include "sqlite3.c"
 #include "sqlite3.h"
 #include "SQLServiceLayer.h"
-#include "AdminFunctions.h"
-
+#include "AdminFunctions.c"
+#include "StudentFunctions.c"
+#include "TechnicianFunctions.h"
 void signup(void);
-
+void startlogin(void);
 
 /*
  The login function asks the user for a username and password
@@ -34,19 +35,19 @@ void login (void) {
         
         switch (c) {
             case 1:
-                printf("\n YOUR A student");
-                //student();
+                printf("\n YOURE A student");
+                student();
                 exit(0);
             case 2:
-                printf("\nYOUR A tech");
-                //technician();
+                printf("\nYOURE A tech");
+                technician();
                 exit(0);
             case 3:
-                printf("\nYOUR AN admin");
+                printf("\nYOURE AN admin");
                 admin();
                 exit(0);
             default:
-                printf("\nINVALID USERNAME OR PASSWORD... ")
+                printf("\nINVALID USERNAME OR PASSWORD... ");
                 printf("\nWould you like to try again (Yes=0 or No=1): ");
                 scanf("%f", i);
                 break;
@@ -119,31 +120,5 @@ void startlogin(void) {
             break; // breaks out of the switch case
     }
     
-}
-
-void signup (void) {
-    char first_name [100];
-    char last_name [100];
-    char username [100];
-    char password [100];
-    int university_ID;
-    
-    printf("\nThe following questions are necessary to signup to the database.");
-    printf("\nA sign up is only available for students - otherwise a username and pasword will be provided.");
-    printf("\nThe account sign up will take 3-5 business days to be verified.");
-    printf("\nEnter your first name: ");
-    scanf("%s", first_name);
-    printf("\nEnter your last name: ");
-    scanf("%s", last_name);
-    printf("\nEnter your username: ");
-    scanf("%s", username);
-    printf("\nEnter your password: ");
-    scanf("%s", password);
-    printf("\nEnter your university_ID: ");
-    scanf("%d", &university_ID);
-    
-    //enter the info into the sql database for users.
-    SignUpStudent(DB, first_name, last_name, username, password, university_ID);
-    startlogin();
 }
 

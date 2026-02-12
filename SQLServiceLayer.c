@@ -6,6 +6,7 @@
 
 // =============== Table Creation ===================
 
+// Creates the three database tables
 void CreateUsersTable(sqlite3 *DB) {
     char *sql =
         "CREATE TABLE IF NOT EXISTS USERS ("
@@ -19,13 +20,13 @@ void CreateUsersTable(sqlite3 *DB) {
 	
 	char *errMsg = 0;
     int rc = sqlite3_exec(DB, sql, 0, 0, &errMsg);
-    
+    // Checks that the sql command is run correctly otherwise it returns an error message, This is repeated throughout the code where sql messages are run
 	if (rc != SQLITE_OK) {
-        printf("Equipment error: %s\n", errMsg);
+        printf("Users error: %s\n", errMsg);
         sqlite3_free(errMsg);
     }
     
-    printf("Users table created successfully\n");
+    printf("Users table created \n");
 	}
 	
 void CreateEquipmentTable(sqlite3 *DB) {
@@ -46,7 +47,7 @@ void CreateEquipmentTable(sqlite3 *DB) {
         printf("Equipment error: %s\n", errMsg);
         sqlite3_free(errMsg);
     }
-    printf("Equipment table created successfully\n");
+    printf("Equipment table created \n");
 }
 
 void CreateBookingTable(sqlite3 *DB) {
@@ -58,9 +59,7 @@ void CreateBookingTable(sqlite3 *DB) {
         "ITEMNUMBER INT NOT NULL, "
         "REQUESTEDAT TEXT NOT NULL, "
         "STARTDATE DATE NOT NULL, "
-        "DUEDATE DATE NOT NULL, "
-        "COLLECTEDAT TEXT NOT NULL, "
-        "RETURNEDAT TEXT);";
+        "DUEDATE DATE NOT NULL); ";
 
     char *errMsg = 0;
     int rc = sqlite3_exec(DB, booking, 0, 0, &errMsg);
@@ -69,7 +68,7 @@ void CreateBookingTable(sqlite3 *DB) {
         printf("Equipment error: %s\n", errMsg);
         sqlite3_free(errMsg);
     }
-    printf("Booking table created successfully\n");
+    printf("Booking table created \n");
 }
 
 
@@ -78,7 +77,7 @@ void CreateBookingTable(sqlite3 *DB) {
 
 
 void SignUpStudent(sqlite3 *DB, char first_name[], char last_name[], char username[], char password[], int university_ID){
-	char status[] = "admin";
+	char status[] = "student";
     char command[1000];
     snprintf(command, sizeof command, "INSERT INTO USERS (USERNAME, NAME, SURNAME, PASSWORD, STATUS, UNIVERSITYID) VALUES('%s', '%s', '%s', '%s', '%s', '%d');", username, first_name, last_name, password, status, university_ID);
     //printf("%s\n", command);
@@ -268,6 +267,130 @@ void ListEquipment(sqlite3 *DB){
         sqlite3_free(errMsg);
     }
 }
+
+// ==================== Accessing BOOKING Functions =======================
+
+
+void AddBooking(sqlite3 *DB, int bookingID, int studentID, int itemNumber, char requestedAt[], char startDate[], char dueDate[]){
+	printf("INSIDE ADD BOOKINGS");
+    char command[1000];
+    snprintf(command, sizeof command, "INSERT INTO BOOKING (BOOKINGID, STUDENTID, ITEMNUMBER, REQUESTEDAT, STARTDATE, DUEDATE) VALUES( %d, %d, %d, '%s', '%s', '%s');", bookingID, studentID, itemNumber, requestedAt, startDate, dueDate);
+    printf("%s\n", command);
+    
+    char *errMsg = 0;
+    int addBooking = sqlite3_exec(DB, command, 0, 0, &errMsg);
+
+    if (addBooking != SQLITE_OK) {
+        printf("Equipment error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+    
+    //         Set the availabilty to booked
+    
+    char sql[512];
+	snprintf(sql, sizeof sql, "UPDATE EQUIPMENT SET AVAILABILITY = 'booked' WHERE ITEMNUMBER = %d ", itemNumber);
+    printf("\n The SQL message is %s", sql);
+    int rc = sqlite3_exec(DB, sql, 0, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+    
+}
+
+void ListBookings(sqlite3 *DB){
+    printf("----------------------------------------------------------------------------------------------\n");
+
+    const char *sql = "SELECT * FROM BOOKING;";
+	char *errMsg = NULL;
+    int rc = sqlite3_exec(DB, sql, printEquipment, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+void ListPersonalBookings(sqlite3 *DB, int universityID){
+    printf("----------------------------------------------------------------------------------------------\n");
+	char command[1000];
+    snprintf(command, sizeof command, "SELECT * FROM BOOKING WHERE STUDENTID = %d;", universityID);
+    printf("Message is %s", command);
+	char *errMsg = NULL;
+    int rc = sqlite3_exec(DB, command, printEquipment, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+void CancelBooking(sqlite3 *DB, int bookingID, int studentID){
+	char find[512];
+	char *errMsg = NULL;
+ 
+    char update[512];
+	snprintf(update, sizeof update, "UPDATE EQUIPMENT SET AVAILABILITY = 'available' WHERE ITEMNUMBER = (SELECT ITEMNUMBER FROM BOOKING WHERE BOOKINGID = %d AND STUDENTID = %d); ", bookingID, studentID);
+    printf("\n The SQL message is %s", update);
+    int rc = sqlite3_exec(DB, update, 0, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+    
+    char sql[512];
+	snprintf(sql, sizeof sql, "DELETE FROM BOOKING WHERE BOOKINGID = %d;", bookingID);
+    printf("\n message is %s", sql);
+    int exe = sqlite3_exec(DB, sql, 0, 0, &errMsg);
+
+    if (exe != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+void FinishBooking(sqlite3 *DB, int bookingID){
+	char find[512];
+	char *errMsg = NULL;
+ 
+    char update[512];
+	snprintf(update, sizeof update, "UPDATE EQUIPMENT SET AVAILABILITY = 'available' WHERE ITEMNUMBER = (SELECT ITEMNUMBER FROM BOOKING WHERE BOOKINGID = %d); ", bookingID);
+    printf("\n The SQL message is %s", update);
+    int rc = sqlite3_exec(DB, update, 0, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+    
+    char sql[512];
+	snprintf(sql, sizeof sql, "DELETE FROM BOOKING WHERE BOOKINGID = %d;", bookingID);
+    printf("\n message is %s", sql);
+    int exe = sqlite3_exec(DB, sql, 0, 0, &errMsg);
+
+    if (exe != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+void EditBookingDate(sqlite3 *DB, int idNumber, char startDate[], char dueDate[]){
+    char sql[512];
+	char *errMsg = NULL;
+	
+	snprintf(sql, sizeof sql, "UPDATE BOOKING SET STARTDATE = '%s', DUEDATE = '%s' WHERE BOOKINGID = %d ", startDate, dueDate, idNumber);
+    printf("\n The SQL message is %s", sql);
+    int rc = sqlite3_exec(DB, sql, 0, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+    printf("\n Entry Edited");
+}
+
 
 
 void OpenDB(void) {

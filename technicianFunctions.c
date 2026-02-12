@@ -1,11 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "loginSignUp.c"
-#include "sqlite3.c"
 #include "sqlite3.h"
-#include "db.c"
 #include "db.h"
-#include "SQLServiceLayer.c"
 #include "SQLServiceLayer.h"
 // the following are to declare functions
 void View_Equipment (void);
@@ -17,7 +13,7 @@ void technician (void);
  the technician function is esentially the main interface of the program.
  it asks the user what they would like to do with the authorities available to the technician
  */
-void technician (void) {
+void technician(void) {
     int i = 0;
     while (i == 0) {
         int choice;
@@ -45,7 +41,7 @@ void technician (void) {
                 break;
             case 5: // to close the program
                 printf("\nNOW CLOSING THE PROGRAM...");
-                i++;
+                exit(0);
                 break;
             default:
                 break;
@@ -56,7 +52,7 @@ void technician (void) {
  the View_Equipment function outputs the entire equipment database, for the user to see
  */
 void View_Equipment (void) {
-    //displays all equipment sql
+    ListEquipment(DB);
 }
 /*
  The Update_Equipment_Status function allows the user to change either the availability or status of an item
@@ -67,22 +63,26 @@ void Update_Equipment_Status (void) {
     int ID_ENUM;
     int choice;
     // the printf statements prompt the user for an input
+    char available[100];
+    char status [100];
     printf("\nEnter the Items ID number: ");
     scanf("%d", &ID_ENUM);
     printf("\nWould you like to change the Availibility (1) or Equipment Status (2): ");
     scanf("%d", &choice);
-    switch(choice) { // switch case for either availability (= 1) or status (= 2)
-        case 1: // to change an items availability
-            char available [100];
+    switch(choice) {
+        case 1:
+            
             printf("\nInput what you would like to change the availability to: ");
             scanf("%s", &available);
             //change the equipment availability, use id number to identify it
+            EditEquipment(DB, ID_ENUM, "AVAILABILITY", available);
             break;
-        case 2: // to change an items status
-            char status [100];
+        case 2:
+            
             printf("\nInput what you would like to change the equipment status to: ");
             scanf("%s", &status);
             //change the equipment status, use id number to identify it
+            EditEquipment(DB, ID_ENUM, "WORKINGSTATUS", status);
             break;
         default: // any other number outputs the following
             printf("<invalid-choice>");
@@ -99,6 +99,7 @@ void Update_Equipment_Status (void) {
 
 void View_Bookings (void) {
     //displays all the booking made by students
+    ListBookings(DB);
 }
 
 /*
@@ -112,6 +113,8 @@ void Update_Booking_For_Equipment (void) {
         // variable placeholders
         int choice = 0;
         int Booking_ID = 0;
+        char Start[11];
+        char End [11];
         //asks for booking ID and what they want to change about the booking entry. saves inputs in various variables
         printf("\nPlease enter the booking ID: ");
         scanf("%d", &Booking_ID);
@@ -122,20 +125,17 @@ void Update_Booking_For_Equipment (void) {
         scanf("%d", &choice);
         switch (choice) {
             case 1: // to set the start and end date of a booking entry
-                char Start [11];
-                char End [11];
                 printf("\nWhat is the Start Date (dd/mm/YYYY): ");
                 scanf("%s", &Start);
                 printf("\nWhat is the End Date (dd/mm/YYYY): ");
                 scanf("%s", &End);
-                //add it into the sql database
-                break;
-            case 2: // to process a return (delete a booking entry; due to being completed)
-                // Get rid of the booking
-                break;
-            case 3: // to return to the technician entry
-                i++;
-                break;
+                EditBookingDate(DB, Booking_ID, Start, End);
+                technician();
+                FinishBooking(DB, Booking_ID);
+                technician();
+            case 3:
+                technician();
+            case 2:
             default:
                 break;
         }

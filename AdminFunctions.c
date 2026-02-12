@@ -80,7 +80,7 @@ void Equipment_Functions (void) {
                 Remove_Equipment ();
                 break;
             case 4:
-                View_Equipment ();
+                ListEquipment(DB);
                 break;
             case 5:
                 printf("\n\n...Returning you to the ADMIN SCREEN...\n");
@@ -227,9 +227,6 @@ void Remove_Equipment (void) {
 /*
  The View_Equipment function lists all the items in the equipment database
  */
-void View_Equipment (void) {
-    ListEquipment(DB);
-}
 
 /*
  The User Function gives you options to add, remove, change details of or view users in the database.

@@ -6,7 +6,7 @@
 #include "db.h"
 #include "SQLServiceLayer.c"
 #include "SQLServiceLayer.h"
-#include "AdminFunctions.c"
+#include "technicianFunctions.c"
 #include "loginSignUp.c"
 
 
